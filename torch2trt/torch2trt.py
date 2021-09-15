@@ -494,6 +494,7 @@ def torch2trt(module,
               int8_calib_algorithm=DEFAULT_CALIBRATION_ALGORITHM,
               int8_calib_batch_size=1,
               use_onnx=False,
+              onnx_opset=9,
               **kwargs):
     
     # capture arguments to provide to context
@@ -526,7 +527,7 @@ def torch2trt(module,
     if use_onnx:
             
         f = io.BytesIO()
-        torch.onnx.export(module, inputs, f, input_names=input_names, output_names=output_names)
+        torch.onnx.export(module, inputs, f, input_names=input_names, output_names=output_names, opset_version=onnx_opset)
         f.seek(0)
         onnx_bytes = f.read()
         network = builder.create_network(1 << int(trt.NetworkDefinitionCreationFlag.EXPLICIT_BATCH))
